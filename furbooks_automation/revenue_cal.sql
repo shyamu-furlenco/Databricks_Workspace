@@ -1,0 +1,2 @@
+SELECT *
+FROM furlenco_silver.furlenco_analytics.furbooks_snapshot_movement_3m
