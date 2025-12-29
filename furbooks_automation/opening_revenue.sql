@@ -1,19 +1,16 @@
 WITH monthly_aggregates AS (
     SELECT 
         DATE_TRUNC('month', start_date) as month_start,
-        SUM(CASE WHEN accountable_entity_type IN ('ATTACHMENT', 'ITEM') AND external_reference_type <> 'RETURN' 
-                 THEN monetary_components_taxableAmount ELSE 0 END) as normal_revenue,
-        SUM(CASE WHEN accountable_entity_type = 'VALUE_ADDED_SERVICE' 
-                 THEN monetary_components_taxableAmount ELSE 0 END) as vas_revenue
-    FROM furlenco_silver.furlenco_analytics.furbooks_snapshot_movement_3months
+        SUM(monetary_components_taxableAmount) as normal_revenue
+    FROM furlenco_analytics.materialized_tables.furbooks_snapshot_movement_3months
     GROUP BY 1
-),
-revenue_bridge AS (
+)
+, revenue_bridge AS (
     SELECT 
         month_start,
-        (normal_revenue + vas_revenue) as closing_revenue,
+        normal_revenue as closing_revenue,
         -- This retrieves the closing_revenue of the previous month
-        LAG(normal_revenue + vas_revenue) OVER (ORDER BY month_start) as opening_revenue
+        LAG(normal_revenue,1,0) OVER (ORDER BY month_start) as opening_revenue
     FROM monthly_aggregates
 )
 SELECT 
