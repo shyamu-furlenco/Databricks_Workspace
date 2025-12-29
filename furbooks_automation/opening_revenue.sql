@@ -5,7 +5,7 @@ WITH monthly_aggregates AS (
                  THEN monetary_components_taxableAmount ELSE 0 END) as normal_revenue,
         SUM(CASE WHEN accountable_entity_type = 'VALUE_ADDED_SERVICE' 
                  THEN monetary_components_taxableAmount ELSE 0 END) as vas_revenue
-    FROM furlenco_silver.furlenco_analytics.furbooks_snapshot_movement_3m
+    FROM furlenco_silver.furlenco_analytics.furbooks_snapshot_movement_3months
     GROUP BY 1
 ),
 revenue_bridge AS (
